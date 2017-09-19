@@ -4,9 +4,9 @@ services:
   tomee:
     image: pravrang/tomee7.0
     expose:
-      - "8080"
-      - "8443"
-      - "8009"
+      - 8080:8080
+      - 8443:8443
+      - 8009:8009
     volumes:
       - "vol_logs:/opt/tomee/webapps"
       - "vol_logs:/opt/tomee/logs"
@@ -18,7 +18,7 @@ services:
     dns_search: webmidlabs.com
 
     deploy:
-      replicas: 4
+      replicas: 2
     update_config:
       parallelism: 2
       delay: 10s
@@ -40,7 +40,7 @@ services:
     dns_search: webmidlabs.com
 
     deploy:
-      replicas: 4
+      replicas: 2
     update_config:
       parallelism: 2
       delay: 10s
@@ -50,7 +50,7 @@ services:
   visualizer:
     image: dockersamples/visualizer:stable
     ports:
-      - "8080:8080"
+      - "9080:9080"
     stop_grace_period: 1m30s
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
