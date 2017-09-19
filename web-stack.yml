@@ -3,7 +3,7 @@ version: '3'
 services:
   tomee:
     image: pravrang/tomee7.0
-    expose:
+    ports:
       - 8080:8080
       - 8443:8443
       - 8009:8009
