@@ -4,9 +4,14 @@ services:
   tomee:
     image: pravrang/tomee7.0
     ports:
-      - 8080:8080
-      - 8443:8443
-      - 8009:8009
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: ingress
+      - target: 8009
+        published: 8009
+        protocol: tcp
+        mode: ingress
     volumes:
       - "vol_logs:/opt/tomee/webapps"
       - "vol_logs:/opt/tomee/logs"
@@ -28,8 +33,11 @@ services:
   httpd:
     image: pravrang/httpd2.4.25
     ports:
-      - 80:80
-      - 443:443
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: ingress
+      
     volumes:
       - "vol_logs:/opt/httpd/logs"
       - "vol_logs:/opt/shared" 
@@ -50,7 +58,7 @@ services:
   visualizer:
     image: dockersamples/visualizer:stable
     ports:
-      - "9080:9080"
+      - "9080:8080"
     stop_grace_period: 1m30s
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
