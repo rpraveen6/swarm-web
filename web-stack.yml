@@ -3,57 +3,24 @@ version: '3'
 services:
   tomee:
     image: pravrang/tomee7.0
+    name: tomee
     ports:
-      - target: 8080
-        published: 8080
-        protocol: tcp
-        mode: ingress
-      - target: 8009
-        published: 8009
-        protocol: tcp
-        mode: ingress
+      - "8080:8080"
+      - "8009:8009"
+      - "8443:8443"
     volumes:
       - "vol_logs:/opt/tomee/webapps"
       - "vol_logs:/opt/tomee/logs"
       - "vol_logs:/opt/shared" 
     networks:
-      docker1:
+      frontend:
         aliases:
           - tomee
-    dns_search: webmidlabs.com
-
     deploy:
       replicas: 2
-    update_config:
-      parallelism: 2
-      delay: 10s
-    restart_policy:
-      condition: on-failure
-
-  httpd:
-    image: pravrang/httpd2.4.25
-    ports:
-      - target: 80
-        published: 80
-        protocol: tcp
-        mode: ingress
-      
-    volumes:
-      - "vol_logs:/opt/httpd/logs"
-      - "vol_logs:/opt/shared" 
-    networks:
-      docker1:
-        aliases:
-          - httpd
-    dns_search: webmidlabs.com
-
-    deploy:
-      replicas: 2
-    update_config:
-      parallelism: 2
-      delay: 10s
-    restart_policy:
-      condition: on-failure
+      update_config:
+        parallelism: 2
+        delay: 10s
 
   visualizer:
     image: dockersamples/visualizer:stable
@@ -65,6 +32,27 @@ services:
     deploy:
       placement:
         constraints: [node.role == manager]
+
+  httpd:
+    image: pravrang/httpd2.4.25
+    ports:
+      - "80:80"
+      - "443:443"    
+    volumes:
+      - "vol_logs:/opt/httpd/logs"
+      - "vol_logs:/opt/shared" 
+    networks:
+      frontend:
+        aliases:
+          - httpd
+    dns_search: webmidlabs.com
+    depends_on:
+      - tomee
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
 
 volumes:
   vol_logs:
